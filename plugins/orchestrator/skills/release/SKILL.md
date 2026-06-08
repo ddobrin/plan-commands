@@ -7,7 +7,7 @@ description: Use when every milestone under the active release in 00-ROADMAP.md 
 
 ## Overview
 Finalize a release: confirm every milestone is done, get explicit approval, create the git tag,
-optionally push, and have `product_owner` mark the release **Shipped** and activate the next one.
+optionally push, and have `product-owner` mark the release **Shipped** and activate the next one.
 
 ## Precondition
 Every milestone under the **active release** in `plans/00-ROADMAP.md` is `COMPLETED` and committed. See
@@ -27,7 +27,7 @@ Supervisor → Contract 1 & Contract 4.
    git tag -a {version} -m "Release {version}"
    ```
 4. **Offer to push:** ask before running `git push --tags`.
-5. **Delegate `product_owner`** (Supervisor → Contract 2) to mark the release **Shipped** in
+5. **Delegate `product-owner`** (Supervisor → Contract 2) to mark the release **Shipped** in
    `plans/00-ROADMAP.md` and **activate the next release**.
 
 ## Exit Gate
@@ -47,4 +47,4 @@ Back to the Supervisor — idle until the next user request restarts the lifecyc
 |---|---|
 | "Most milestones are done, tag it." | Every milestone must be COMPLETED. Partial ≠ shippable. |
 | "I'll tag and push in one go." | Tag, then ask separately before pushing. |
-| "Tagging done, we're finished." | Have `product_owner` mark Shipped and activate the next release. |
+| "Tagging done, we're finished." | Have `product-owner` mark Shipped and activate the next release. |

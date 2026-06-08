@@ -51,7 +51,7 @@ Contract 1 for paths.)
 `plans/research/{topic}_context.md` exists and references **real** files and patterns (not speculation).
 
 ## Hand-off
-`discovery` reads `plans/research/{topic}_context.md` and feeds it to `product_owner`.
+`discovery` reads `plans/research/{topic}_context.md` and feeds it to `product-owner`.
 
 ## Constraints
 - **READ-ONLY codebase** — never edit, create, or delete source files.
@@ -62,5 +62,5 @@ Contract 1 for paths.)
 | Thought | Reality |
 |---|---|
 | "I roughly know this codebase, I'll skip reading." | Blind research poisons every later phase. Open the files. |
-| "I'll note what to build while I'm here." | That's the spec — `product_owner`'s job. Stay read-only. |
+| "I'll note what to build while I'm here." | That's the spec — `product-owner`'s job. Stay read-only. |
 | "Filenames tell me enough." | Names lie. Cite real `file:line` evidence. |

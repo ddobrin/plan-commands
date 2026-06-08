@@ -8,7 +8,7 @@ description: Use when a spec and plan are approved and the plan still has unchec
 ## Overview
 Turn the approved `plan.md` into committed code, **one execution group at a time**, with a
 verify-everything loop. You implement nothing yourself — you sequence `engineer`, `simplifier`,
-`auditor`, and `adversarial-implementation-validation`, and the Supervisor performs the commit. Each
+`auditor`, and `implementation-validator`, and the Supervisor performs the commit. Each
 group lands as its own verified, approved commit.
 
 ## Precondition
@@ -35,7 +35,7 @@ For the **current execution group** in `plan.md`:
      re-enter this loop.
    - **Pass** → continue.
 4. **Implementation gate (Supervisor → Contract 3).** Capture the diff range and delegate
-   `adversarial-implementation-validation`:
+   `implementation-validator`:
    ```bash
    BASE_SHA=$(git rev-parse origin/main)   # or the group's branch point / HEAD~1
    HEAD_SHA=$(git rev-parse HEAD)

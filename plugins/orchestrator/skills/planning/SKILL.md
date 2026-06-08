@@ -8,7 +8,7 @@ description: Use when a validated spec exists but no validated plan yet — to t
 ## Overview
 Produce a **validated** `plan.md`. Delegate authoring to `architect` (which maps the spec onto the real
 codebase and writes a micro-stepped plan with safe parallel groups and test-first steps), then **attack
-the plan** with `adversarial-plan-validation`, whose skeptics assume the plan *will fail* and read the
+the plan** with `plan-validator`, whose skeptics assume the plan *will fail* and read the
 source to find the **first domino**. No execution until the plan gate is clean and the user approves.
 
 ## Precondition
@@ -25,7 +25,7 @@ fast-path. See Supervisor → Contract 1 & Contract 3.
    - `plans/active_milestones/{moniker}/plan.md` — analysis, **parallel task groups** (tasks in a group
      must not touch the same files), and explicit step-by-step details with exact paths + test commands;
    - optionally `data-model.md` / `api-contracts.md`.
-2. **Plan gate (Supervisor → Contract 3).** Delegate `adversarial-plan-validation` with the `plan.md`
+2. **Plan gate (Supervisor → Contract 3).** Delegate `plan-validator` with the `plan.md`
    path **and the repository root** (its skeptics must open the files the plan assumes). Aggregate the
    2-of-3 verdict and **persist it to** `plans/active_milestones/{moniker}/validation/plan-validation.md`,
    recording the `first_domino`.
@@ -51,7 +51,7 @@ findings resolved). User approval is then pending at the Supervisor's Planning g
 ## Red Flags
 | Thought | Reality |
 |---|---|
-| "Plan reads cleanly, skip the gate." | Clean prose hides dead assumptions. Run `adversarial-plan-validation`. |
+| "Plan reads cleanly, skip the gate." | Clean prose hides dead assumptions. Run `plan-validator`. |
 | "A skeptic says step 3 is wrong but cited no line." | Unverified prediction = guess. Require `file:line` or re-check before reordering. |
 | "Let me start coding to save time." | No execution before the plan gate is clean **and** the user approves. |
 | "I'll group everything into one big step." | Micro-step it; group only independent tasks for parallelism. |

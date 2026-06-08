@@ -52,10 +52,10 @@ digraph supervisor_loop {
 | Phase | Skill to invoke | Underlying plan skills it delegates to |
 |---|---|---|
 | 0 Research | `research` | *(built-in investigation — no plan skill)* |
-| 1 Discovery | `discovery` | `product_owner` → **`spec_validator`** |
-| 2 Planning | `planning` | `architect` → **`adversarial-plan-validation`** |
-| 3 Construction | `construction` | `engineer` → `simplifier` → `auditor` → **`adversarial-implementation-validation`** |
-| 4 Release | `release` | `product_owner` (mark shipped) |
+| 1 Discovery | `discovery` | `product-owner` → **`spec-validator`** |
+| 2 Planning | `planning` | `architect` → **`plan-validator`** |
+| 3 Construction | `construction` | `engineer` → `simplifier` → `auditor` → **`implementation-validator`** |
+| 4 Release | `release` | `product-owner` (mark shipped) |
 
 ## State-detection Routing Table (the spine)
 
@@ -83,11 +83,11 @@ Re-derive the current phase from disk every turn — this is what makes the pipe
 ```mermaid
 graph TD
     Start(["User Request"]) --> R["Phase 0 research → context.md"]
-    R --> PO["Phase 1 discovery → product_owner → spec.md"]
-    PO --> SV{"🔎 spec_validator gate"}
+    R --> PO["Phase 1 discovery → product-owner → spec.md"]
+    PO --> SV{"🔎 spec-validator gate"}
     SV -- confirmed findings --> PO
     SV -- clean --> ARCH["Phase 2 planning → architect → plan.md"]
-    ARCH --> PV{"🔎 plan-validation gate"}
+    ARCH --> PV{"🔎 plan-validator gate"}
     PV -- confirmed findings --> ARCH
     PV -- clean --> Human{"🛑 Human approval (spec + plan)"}
     Human -- reject --> ARCH
@@ -95,7 +95,7 @@ graph TD
     ENG --> AUD{"auditor"}
     AUD -- code broken --> ENG
     AUD -- plan wrong --> ARCH
-    AUD -- pass --> IV{"🔎 adversarial-implementation-validation gate"}
+    AUD -- pass --> IV{"🔎 implementation-validator gate"}
     IV -- confirmed defects --> ENG
     IV -- clean --> Git{"🛑 Git gate (user approves commit)"}
     Git -- approve --> CheckRelease{"Release complete?"}
@@ -115,21 +115,21 @@ These four contracts are defined **once here** and referenced by every phase ski
 Every artifact has exactly one canonical path. Pass these paths between skills; never paste contents.
 
 ```
-plans/00-ROADMAP.md                                  # master roadmap — product_owner owns it
+plans/00-ROADMAP.md                                  # master roadmap — product-owner owns it
 plans/research/{topic}_context.md                    # research context report (Phase 0)
 plans/active_milestones/{moniker}/context.md         # research report, moved in during discovery
-plans/active_milestones/{moniker}/spec.md            # product_owner output
+plans/active_milestones/{moniker}/spec.md            # product-owner output
 plans/active_milestones/{moniker}/plan.md            # architect output
 plans/active_milestones/{moniker}/data-model.md      # architect output (optional)
 plans/active_milestones/{moniker}/api-contracts.md   # architect output (optional)
 plans/active_milestones/{moniker}/validation/        # gate verdicts (this orchestrator's convention)
-    spec-validation.md     # aggregated spec_validator verdict
-    plan-validation.md     # aggregated adversarial-plan-validation verdict
-    impl-validation.md     # aggregated adversarial-implementation-validation verdict
+    spec-validation.md     # aggregated spec-validator verdict
+    plan-validation.md     # aggregated plan-validator verdict
+    impl-validation.md     # aggregated implementation-validator verdict
 plans/audit/AUDIT_{plan}.md                          # auditor report (keep plans/audit/.gitignore = *)
 ```
 
-`{moniker}` is a kebab/snake slug like `004-oauth-integration`, assigned by `product_owner`.
+`{moniker}` is a kebab/snake slug like `004-oauth-integration`, assigned by `product-owner`.
 
 ## Contract 2 — Runtime-agnostic Delegation Contract
 
@@ -155,14 +155,14 @@ Always **reason aloud first**: state *why* this skill is needed before delegatin
 
 A "gate" runs a validator skill on the artifact a producer just created, then decides advance vs. loop.
 
-1. **Run** the validator (`spec_validator` / `adversarial-plan-validation` /
-   `adversarial-implementation-validation`). Each returns its own 2-of-3 majority JSON with
+1. **Run** the validator (`spec-validator` / `plan-validator` /
+   `implementation-validator`). Each returns its own 2-of-3 majority JSON with
    `confirmed` and `unconfirmed` findings (plan adds `first_domino`; impl adds `calibration` +
    `failed_claims`).
 2. **Persist** the aggregated verdict to the matching `validation/*.md` file (Contract 1). This file is
    the on-disk proof the gate ran — the Routing Table keys off it.
 3. **Decide:**
-   - **Any `confirmed` finding** → loop back to the **producer** skill (`product_owner` / `architect` /
+   - **Any `confirmed` finding** → loop back to the **producer** skill (`product-owner` / `architect` /
      `engineer`) with the finding's `tightening` / `fix`, then **re-run the gate exactly once** on the
      revision (matches each validator's "re-run the panel once" rule).
    - **Only `unconfirmed` findings** → surface them to the user as FYI; do not block.
@@ -171,7 +171,7 @@ A "gate" runs a validator skill on the artifact a producer just created, then de
      line the panel produces.
 4. A gate's verdict file is **"clean"** when it records no unresolved `confirmed` findings.
 
-**Trivial fast-path.** Before Phase 1, classify the milestone using `product_owner`'s own trivial test
+**Trivial fast-path.** Before Phase 1, classify the milestone using `product-owner`'s own trivial test
 (typo / one-line tweak / no edge cases). A **trivial** milestone may bypass grilling and **all three**
 adversarial gates, going straight to a minimal plan → `engineer` → `auditor`. A **complex** milestone
 **must** pass all three gates — spec, then plan, then implementation. When unsure, treat it as complex.
